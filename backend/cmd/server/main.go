@@ -8,6 +8,7 @@ import (
 	"PamojaBuild/internal/config"
 	"PamojaBuild/internal/db"
 	"PamojaBuild/internal/lightning"
+	"PamojaBuild/internal/router"
 )
 
 func main() {
@@ -23,9 +24,9 @@ func main() {
 	if err != nil {
 		log.Fatal("Failed to create lightning client:", err)
 	}
-	_ = lightningClient // Used by donations and wallet services
 
-	router := http.NewServeMux()
+	mux := http.NewServeMux()
+	router.SetupRoutes(mux, database.DB, lightningClient)
 
 	port := cfg.Port
 	if port == "" {
@@ -33,5 +34,5 @@ func main() {
 	}
 
 	fmt.Printf("Server starting on port %s\n", port)
-	log.Fatal(http.ListenAndServe(":"+port, router))
+	log.Fatal(http.ListenAndServe(":"+port, mux))
 }
