@@ -178,6 +178,47 @@ func (c *Client) CheckPaymentStatus(paymentHash string) (settled bool, err error
 	return result.Settled, nil
 }
 
+func (c *Client) PublishTransaction(txHex string) (string, error) {
+	url := fmt.Sprintf("https://%s/v2/wallet/tx", c.config.LNDHost)
+
+	reqBody := map[string]interface{}{
+		"tx_hex": txHex,
+	}
+
+	jsonBody, err := json.Marshal(reqBody)
+	if err != nil {
+		return "", err
+	}
+
+	req, err := http.NewRequest("POST", url, strings.NewReader(string(jsonBody)))
+	if err != nil {
+		return "", err
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	c.setMacaroonHeader(req)
+
+	resp, err := c.httpClient.Do(req)
+	if err != nil {
+		return "", fmt.Errorf("failed to publish transaction: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		body, _ := io.ReadAll(resp.Body)
+		return "", fmt.Errorf("publish transaction failed with status %d: %s", resp.StatusCode, string(body))
+	}
+
+	var result struct {
+		TxID string `json:"txid"`
+	}
+	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+		return "", fmt.Errorf("failed to decode publish transaction response: %w", err)
+	}
+
+	return result.TxID, nil
+}
+
 func (c *Client) setMacaroonHeader(req *http.Request) {
 	req.Header.Set("Grpc-Metadata-Macaroon", c.config.LNDMacaroonHex)
 }
