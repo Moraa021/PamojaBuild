@@ -46,6 +46,7 @@ func SetupRouter(jwtSecret string, db *sql.DB, lndClient *lightning.Client) *mux
 	walletHandler := wallet.NewHandler(walletService)
 
 	r := mux.NewRouter()
+	r.Use(middleware.CORSMiddleware)
 
 	// Health check
 	r.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {

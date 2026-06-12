@@ -24,18 +24,18 @@ func (h *Handler) CreateTask(w http.ResponseWriter, r *http.Request) {
 	_ = r.ParseMultipartForm(5 << 20)
 	userIDVal := r.Context().Value("user_id")
 	if userIDVal == nil {
-		http.Error(w, "unauthenticated", http.StatusUnauthorized)
+		writeError(w, http.StatusUnauthorized, "unauthenticated")
 		return
 	}
 	userID, ok := userIDVal.(int64)
 	if !ok {
-		http.Error(w, "unauthenticated", http.StatusUnauthorized)
+		writeError(w, http.StatusUnauthorized, "unauthenticated")
 		return
 	}
 
 	maxVol, err := strconv.ParseInt(r.FormValue("max_volunteers"), 10, 64)
 	if err != nil || maxVol <= 0 {
-		http.Error(w, "max_volunteers is required and must be positive", http.StatusBadRequest)
+		writeError(w, http.StatusBadRequest, "max_volunteers is required and must be positive")
 		return
 	}
 
@@ -43,7 +43,7 @@ func (h *Handler) CreateTask(w http.ResponseWriter, r *http.Request) {
 	if gs := r.FormValue("goal_sats"); gs != "" {
 		v, err := strconv.ParseInt(gs, 10, 64)
 		if err != nil {
-			http.Error(w, "invalid goal_sats", http.StatusBadRequest)
+			writeError(w, http.StatusBadRequest, "invalid goal_sats")
 			return
 		}
 		goalSats = sql.NullInt64{Int64: v, Valid: true}
@@ -70,7 +70,7 @@ func (h *Handler) CreateTask(w http.ResponseWriter, r *http.Request) {
 	var header *multipart.FileHeader
 	file, header, err = r.FormFile("image")
 	if err != nil && err != http.ErrMissingFile {
-		http.Error(w, "error reading image", http.StatusBadRequest)
+		writeError(w, http.StatusBadRequest, "error reading image")
 		return
 	}
 	if file != nil {
@@ -78,12 +78,11 @@ func (h *Handler) CreateTask(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := h.Service.CreateTask(task, file, header); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		writeError(w, http.StatusBadRequest, err.Error())
 		return
 	}
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(task)
+
+	writeSuccess(w, http.StatusCreated, task)
 }
 
 func (h *Handler) ListTasks(w http.ResponseWriter, r *http.Request) {
@@ -93,38 +92,36 @@ func (h *Handler) ListTasks(w http.ResponseWriter, r *http.Request) {
 		r.URL.Query().Get("category"),
 	)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		writeError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(tasks)
+	writeSuccess(w, http.StatusOK, tasks)
 }
 
 func (h *Handler) GetTask(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.ParseInt(mux.Vars(r)["id"], 10, 64)
 	if err != nil {
-		http.Error(w, "invalid task id", http.StatusBadRequest)
+		writeError(w, http.StatusBadRequest, "invalid task id")
 		return
 	}
 	task, err := h.Service.GetTask(id)
 	if err != nil {
-		http.Error(w, "task not found", http.StatusNotFound)
+		writeError(w, http.StatusNotFound, "task not found")
 		return
 	}
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(task)
+	writeSuccess(w, http.StatusOK, task)
 }
 
 func (h *Handler) RaiseCap(w http.ResponseWriter, r *http.Request) {
 	id, _ := strconv.ParseInt(mux.Vars(r)["id"], 10, 64)
 	userIDVal := r.Context().Value("user_id")
 	if userIDVal == nil {
-		http.Error(w, "unauthenticated", http.StatusUnauthorized)
+		writeError(w, http.StatusUnauthorized, "unauthenticated")
 		return
 	}
 	userID, ok := userIDVal.(int64)
 	if !ok {
-		http.Error(w, "unauthenticated", http.StatusUnauthorized)
+		writeError(w, http.StatusUnauthorized, "unauthenticated")
 		return
 	}
 
@@ -132,12 +129,30 @@ func (h *Handler) RaiseCap(w http.ResponseWriter, r *http.Request) {
 		MaxVolunteers int64 `json:"max_volunteers"`
 	}
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
-		http.Error(w, "invalid body", http.StatusBadRequest)
+		writeError(w, http.StatusBadRequest, "invalid body")
 		return
 	}
 	if err := h.Service.RaiseCap(id, body.MaxVolunteers, userID); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		writeError(w, http.StatusBadRequest, err.Error())
 		return
 	}
-	w.Write([]byte(`{"message":"cap updated"}`))
+	writeSuccess(w, http.StatusOK, map[string]string{"message": "cap updated"})
+}
+
+func writeJSON(w http.ResponseWriter, status int, data interface{}) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(status)
+	json.NewEncoder(w).Encode(data)
+}
+
+func writeError(w http.ResponseWriter, status int, message string) {
+	writeJSON(w, status, map[string]interface{}{
+		"error": message,
+	})
+}
+
+func writeSuccess(w http.ResponseWriter, status int, data interface{}) {
+	writeJSON(w, status, map[string]interface{}{
+		"data": data,
+	})
 }

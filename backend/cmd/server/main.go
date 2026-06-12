@@ -8,6 +8,8 @@ import (
 	"PamojaBuild/internal/db"
 	"PamojaBuild/internal/lightning"
 	"PamojaBuild/internal/router"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 func main() {
@@ -65,6 +67,13 @@ func seedKeyholders() error {
 		return nil
 	}
 
+	// Generate a valid bcrypt hash for default password "password123"
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte("password123"), bcrypt.DefaultCost)
+	if err != nil {
+		return err
+	}
+	passHash := string(hashedPassword)
+
 	// Seed 5 keyholders (using fixed phone numbers)
 	keyholderPhones := []string{
 		"0711000001",
@@ -83,7 +92,7 @@ func seedKeyholders() error {
 			result, err := db.SQLDB.Exec(
 				"INSERT INTO users (phone, password_hash, role) VALUES (?, ?, ?)",
 				phone,
-				"$2a$10$tempHashForSeededKeyholders", // Temporary hash
+				passHash,
 				"keyholder",
 			)
 			if err != nil {

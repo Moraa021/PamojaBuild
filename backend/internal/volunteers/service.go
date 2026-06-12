@@ -49,6 +49,12 @@ func (s *Service) Apply(taskID, userID int64) (*models.Volunteer, error) {
 	if err := s.Repo.Create(v); err != nil {
 		return nil, err
 	}
+	if status == "approved" {
+		approvedCount, err := s.TasksRepo.CountApprovedVolunteers(taskID)
+		if err == nil && approvedCount >= task.MaxVolunteers {
+			_ = s.TasksRepo.UpdateStatus(taskID, "in_progress")
+		}
+	}
 	return v, nil
 }
 
@@ -74,7 +80,14 @@ func (s *Service) Approve(volunteerID, requesterID int64) error {
 	if count >= task.MaxVolunteers {
 		return errors.New("volunteer cap reached")
 	}
-	return s.Repo.UpdateStatus(volunteerID, "approved")
+	if err := s.Repo.UpdateStatus(volunteerID, "approved"); err != nil {
+		return err
+	}
+	approvedCount, err := s.TasksRepo.CountApprovedVolunteers(v.TaskID)
+	if err == nil && approvedCount >= task.MaxVolunteers {
+		_ = s.TasksRepo.UpdateStatus(v.TaskID, "in_progress")
+	}
+	return nil
 }
 
 func (s *Service) Reject(volunteerID, requesterID int64) error {

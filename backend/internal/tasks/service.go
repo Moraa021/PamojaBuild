@@ -89,5 +89,11 @@ func (s *Service) RaiseCap(taskID, newCap, requesterID int64) error {
 	if newCap < task.MaxVolunteers {
 		return errors.New("cannot lower the volunteer cap")
 	}
-	return s.Repo.RaiseCap(taskID, newCap)
+	if err := s.Repo.RaiseCap(taskID, newCap); err != nil {
+		return err
+	}
+	if task.Status == "in_progress" && newCap > task.MaxVolunteers {
+		_ = s.Repo.UpdateStatus(taskID, "open")
+	}
+	return nil
 }

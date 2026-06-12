@@ -17,7 +17,11 @@ func NewRepository(db *sql.DB) *Repository {
 
 func (r *Repository) Create(t *models.Task) error {
 	query := `INSERT INTO tasks (creator_id, title, description, category, region, location_detail, status, goal_sats, max_volunteers, volunteer_mode, image_path) VALUES ($1,$2,$3,$4,$5,$6,'open',$7,$8,$9,$10) RETURNING id, created_at`
-	return r.DB.QueryRow(query, t.CreatorID, t.Title, t.Description, t.Category, t.Region, t.LocationDetail, t.GoalSats, t.MaxVolunteers, t.VolunteerMode, t.ImagePath).Scan(&t.ID, &t.CreatedAt)
+	err := r.DB.QueryRow(query, t.CreatorID, t.Title, t.Description, t.Category, t.Region, t.LocationDetail, t.GoalSats, t.MaxVolunteers, t.VolunteerMode, t.ImagePath).Scan(&t.ID, &t.CreatedAt)
+	if err == nil {
+		t.Status = "open"
+	}
+	return err
 }
 
 func (r *Repository) List(region, status, category string) ([]models.Task, error) {

@@ -20,8 +20,7 @@ func NewHandler(service *Service) *Handler {
 func (h *Handler) Register(w http.ResponseWriter, r *http.Request) {
 	var req models.RegisterRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(map[string]string{"error": "invalid request"})
+		writeError(w, http.StatusBadRequest, "invalid request")
 		return
 	}
 
@@ -31,13 +30,11 @@ func (h *Handler) Register(w http.ResponseWriter, r *http.Request) {
 		if err.Error() == "user already exists" {
 			status = http.StatusConflict
 		}
-		w.WriteHeader(status)
-		json.NewEncoder(w).Encode(map[string]string{"error": err.Error()})
+		writeError(w, status, err.Error())
 		return
 	}
 
-	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(map[string]interface{}{
+	writeSuccess(w, http.StatusCreated, map[string]interface{}{
 		"user":  user,
 		"token": token,
 	})
@@ -46,20 +43,36 @@ func (h *Handler) Register(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 	var req models.LoginRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(map[string]string{"error": "invalid request"})
+		writeError(w, http.StatusBadRequest, "invalid request")
 		return
 	}
 
 	user, token, err := h.service.Login(&req)
 	if err != nil {
-		w.WriteHeader(http.StatusUnauthorized)
-		json.NewEncoder(w).Encode(map[string]string{"error": err.Error()})
+		writeError(w, http.StatusUnauthorized, err.Error())
 		return
 	}
 
-	json.NewEncoder(w).Encode(map[string]interface{}{
+	writeSuccess(w, http.StatusOK, map[string]interface{}{
 		"user":  user,
 		"token": token,
+	})
+}
+
+func writeJSON(w http.ResponseWriter, status int, data interface{}) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(status)
+	json.NewEncoder(w).Encode(data)
+}
+
+func writeError(w http.ResponseWriter, status int, message string) {
+	writeJSON(w, status, map[string]interface{}{
+		"error": message,
+	})
+}
+
+func writeSuccess(w http.ResponseWriter, status int, data interface{}) {
+	writeJSON(w, status, map[string]interface{}{
+		"data": data,
 	})
 }
