@@ -2,6 +2,39 @@
 
 ## Last Updated: 2026-06-12
 
+## Feature 9: Wallet & Multisig (COMPLETED)
+
+### Implementation Summary
+
+Implemented a 3-of-5 multisig Bitcoin payout system where task funds are cryptographically held on-chain using Bitcoin PSBTs and released via keyholder signatures:
+
+**Files Created/Modified:**
+- `backend/db/migrations/005_add_psbt_partial.sql` - Added `psbt_partial` column to `payout_signatures` table.
+- `backend/internal/config/config.go` - Added keyholder WIF configuration and Bitcoin RPC host/credential loading.
+- `backend/internal/lightning/client.go` - Implemented `PublishTransaction` REST endpoint wrapper for raw transaction broadcasting.
+- `backend/internal/bitcoin/client.go` - Created Bitcoin Core RPC client with mock/test fallbacks for UTXO retrieval.
+- `backend/internal/models/volunteer.go` & `wallet.go` - Added `PaymentRequest`, `PSBT`, `TxID`, and `PublicKey` fields.
+- `backend/internal/wallet/repository.go` - Created database queries for keyholders, signatures, rejections, payout requests, volunteers, and tasks.
+- `backend/internal/wallet/service.go` - Implemented 3-of-5 script derivation, base PSBT construction, WIF signature generation, rejection counting/reopening, PSBT finalization/merging, broadcasting, and off-chain volunteer payments.
+- `backend/internal/wallet/handler.go` - Implemented `Complete`, `Sign`, and `Reject` handlers.
+- `backend/internal/router/router.go` - Registered all HTTP endpoints.
+
+### Wallet & Multisig API
+
+| Method | Route | Auth | Description |
+| ----- | ----- | ----- | ----- |
+| POST | /tasks/{id}/complete | Required (poster) | Marks task complete, creates payout request, and returns multisig address |
+| POST | /wallet/payout/{id}/sign | Required (keyholder) | Signs a payout request (releases funds once 3 signatures are gathered) |
+| POST | /wallet/payout/{id}/reject | Required (keyholder) | Rejects a payout request (reopens task back to open status if 3 rejections are gathered) |
+
+### Testing Instructions
+
+Run the unit and integration tests:
+```bash
+cd backend
+go test -v ./internal/wallet/...
+```
+
 ## Feature 8: Donations (COMPLETED)
 
 ### Implementation Summary
