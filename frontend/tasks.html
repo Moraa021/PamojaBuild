@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Live Tasks - PamojaBuild</title>
+        <meta name="description" content="Browse community-owned tasks, pool donations, and claim work on PamojaBuild.">
+        <link rel="stylesheet" href="css/styles.css">
+    </head>
+    <body>
+         <!-- Navigation -->
+        <nav class="navbar" role="navigation" aria-label="Main">
+            <div class="container">
+                <div class="navbar-brand">
+                    <a href="index.html#home" class="logo">
+                        <span class="logo-text">PamojaBuild</span>
+                    </a>
+                </div>
+                <div class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+                <ul class="nav-menu" id="navMenu">
+                    <li><a href="index.html#home" class="nav-link active">Home</a></li>
+                    <li><a href="index.html#problem" class="nav-link">The Problem</a></li>
+                    <li><a href="index.html#solution" class="nav-link">How It Works</a></li>
+                    <li><a href="tasks.html#tasks" class="nav-link">Tasks</a></li>
+                    <li><a href="app.html#app" class="nav-link">Launch App</a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Live Tasks Section -->
+        <section id="tasks" class="section" style="padding-top: 100px; min-height: 80vh;">
+            <div class="container">
+                <h2 class="section-title">Live Tasks</h2>
+                <p class="section-subtitle">Join your community in action</p>
+
+                <div class="tasks-filter">
+                    <button class="filter-btn active" data-filter="all">All Tasks</button>
+                    <button class="filter-btn" data-filter="active">Active</button>
+                    <button class="filter-btn" data-filter="completed">Completed</button>
+                </div>
+
+                <div class="tasks-grid" id="tasksContainer">
+                    <!-- Tasks populated by JavaScript -->
+                    <div class="task-empty">
+                        <p>Loading tasks...</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </body>
+</html>
