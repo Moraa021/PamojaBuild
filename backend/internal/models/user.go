@@ -14,3 +14,18 @@ const (
 	RoleUser      UserRole = "user"
 	RoleKeyholder UserRole = "keyholder"
 )
+
+type RegisterRequest struct {
+	Phone    string `json:"phone"`
+	Password string `json:"password"`
+}
+
+type LoginRequest struct {
+	Phone    string `json:"phone"`
+	Password string `json:"password"`
+}
+
+type LoginResponse struct {
+	Token string `json:"token"`
+	User  *User  `json:"user"`
+}

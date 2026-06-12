@@ -5,6 +5,8 @@ import (
 	"errors"
 	"net/http"
 	"strconv"
+
+	"github.com/gorilla/mux"
 )
 
 type donateRequest struct {
@@ -21,8 +23,11 @@ func NewHandler(service *Service) *Handler {
 }
 
 func (h *Handler) Donate(w http.ResponseWriter, r *http.Request) {
-	// Parse task_id from path wildcard
+	// Parse task_id from path wildcard or gorilla mux
 	taskIDStr := r.PathValue("task_id")
+	if taskIDStr == "" {
+		taskIDStr = mux.Vars(r)["task_id"]
+	}
 	taskID, err := strconv.ParseInt(taskIDStr, 10, 64)
 	if err != nil {
 		writeError(w, http.StatusBadRequest, "Invalid task ID")
@@ -67,8 +72,11 @@ func (h *Handler) Donate(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) GetTotal(w http.ResponseWriter, r *http.Request) {
-	// Parse task_id from path wildcard
+	// Parse task_id from path wildcard or gorilla mux
 	taskIDStr := r.PathValue("task_id")
+	if taskIDStr == "" {
+		taskIDStr = mux.Vars(r)["task_id"]
+	}
 	taskID, err := strconv.ParseInt(taskIDStr, 10, 64)
 	if err != nil {
 		writeError(w, http.StatusBadRequest, "Invalid task ID")

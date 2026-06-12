@@ -8,10 +8,13 @@ import (
 	"github.com/btcsuite/btcd/btcec/v2"
 	"github.com/btcsuite/btcd/btcutil"
 	"github.com/btcsuite/btcd/chaincfg"
+	"github.com/joho/godotenv"
 )
 
 type Config struct {
 	Port            string
+	ServerPort      string // alias for Port for teammate compatibility
+	DBPath          string
 	JWTSecret       []byte
 	LNDHost         string
 	LNDMacaroonHex  string
@@ -23,6 +26,9 @@ type Config struct {
 }
 
 func Load() *Config {
+	// Load .env file if it exists
+	_ = godotenv.Load()
+
 	keys := make([]string, 5)
 	for i := 1; i <= 5; i++ {
 		envKey := fmt.Sprintf("KEYHOLDER_%d_WIF", i)
@@ -38,9 +44,18 @@ func Load() *Config {
 		keys[i-1] = val
 	}
 
+	port := getEnv("SERVER_PORT", "8080")
+	if os.Getenv("PORT") != "" {
+		port = os.Getenv("PORT")
+	}
+
+	jwtSecretStr := getEnv("JWT_SECRET", "dev-secret-key-change-in-production")
+
 	return &Config{
-		Port:           getEnv("PORT", "8080"),
-		JWTSecret:      []byte(getEnv("JWT_SECRET", "dev-secret-key-change-in-production")),
+		Port:           port,
+		ServerPort:     port,
+		DBPath:         getEnv("DB_PATH", "./data/pamoja.db"),
+		JWTSecret:      []byte(jwtSecretStr),
 		LNDHost:        getEnv("LND_HOST", "localhost:8080"),
 		LNDMacaroonHex: getEnv("LND_MACAROON_HEX", ""),
 		LNDTLSCertPath: getEnv("LND_TLS_CERT_PATH", "./tls.cert"),

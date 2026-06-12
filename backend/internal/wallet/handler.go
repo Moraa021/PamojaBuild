@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+
+	"github.com/gorilla/mux"
 )
 
 type Handler struct {
@@ -16,8 +18,11 @@ func NewHandler(service *Service) *Handler {
 }
 
 func (h *Handler) Complete(w http.ResponseWriter, r *http.Request) {
-	// Parse task ID from wildcard
+	// Parse task ID from wildcard or gorilla mux
 	taskIDStr := r.PathValue("id")
+	if taskIDStr == "" {
+		taskIDStr = mux.Vars(r)["id"]
+	}
 	taskID, err := strconv.ParseInt(taskIDStr, 10, 64)
 	if err != nil {
 		writeError(w, http.StatusBadRequest, "Invalid task ID")
@@ -65,8 +70,11 @@ func (h *Handler) Complete(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) Sign(w http.ResponseWriter, r *http.Request) {
-	// Parse payout request ID
+	// Parse payout request ID or gorilla mux
 	idStr := r.PathValue("id")
+	if idStr == "" {
+		idStr = mux.Vars(r)["id"]
+	}
 	id, err := strconv.ParseInt(idStr, 10, 64)
 	if err != nil {
 		writeError(w, http.StatusBadRequest, "Invalid payout request ID")
@@ -104,8 +112,11 @@ func (h *Handler) Sign(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) Reject(w http.ResponseWriter, r *http.Request) {
-	// Parse payout request ID
+	// Parse payout request ID or gorilla mux
 	idStr := r.PathValue("id")
+	if idStr == "" {
+		idStr = mux.Vars(r)["id"]
+	}
 	id, err := strconv.ParseInt(idStr, 10, 64)
 	if err != nil {
 		writeError(w, http.StatusBadRequest, "Invalid payout request ID")

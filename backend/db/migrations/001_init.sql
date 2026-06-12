@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS tasks (
 	creator_id INTEGER NOT NULL,
 	title TEXT NOT NULL,
 	description TEXT NOT NULL,
+	category TEXT NOT NULL DEFAULT '',
 	region TEXT NOT NULL,
 	location_detail TEXT,
 	status TEXT NOT NULL DEFAULT 'open',

@@ -1,6 +1,6 @@
 package config
 
-var Counties = []string{
+var KenyanCounties = []string{
 	"Mombasa", "Kwale", "Kilifi", "Tana River", "Lamu", "Garissa", "Wajir", "Mandera",
 	"Marsabit", "Isiolo", "Meru", "Tharaka-Nithi", "Embu", "Kitui", "Machakos",
 	"Makueni", "Nyandarua", "Nyeri", "Kirinyaga", "Murang'a", "Kiambu", "Turkana",
@@ -11,7 +11,7 @@ var Counties = []string{
 }
 
 func IsValidCounty(county string) bool {
-	for _, c := range Counties {
+	for _, c := range KenyanCounties {
 		if c == county {
 			return true
 		}

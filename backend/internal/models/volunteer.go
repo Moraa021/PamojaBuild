@@ -14,6 +14,6 @@ type VolunteerStatus string
 const (
 	VolunteerStatusPending   VolunteerStatus = "pending"
 	VolunteerStatusApproved  VolunteerStatus = "approved"
-	VolunteerStatusPaid    VolunteerStatus = "paid"
+	VolunteerStatusPaid      VolunteerStatus = "paid"
 	VolunteerStatusPayFailed VolunteerStatus = "pay_failed"
 )
