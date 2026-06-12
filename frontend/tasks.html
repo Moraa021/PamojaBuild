@@ -51,5 +51,59 @@
                 </div>
             </div>
         </section>
+
+        <!-- Task Completion Modal (Before/After Images + Confirmations) -->
+        <div id="taskCompletionModal" class="modal" role="dialog" aria-label="Task Completion">
+            <div class="modal-content" style="max-width: 600px;">
+                <button class="modal-close" id="completionModalCloseBtn" aria-label="Close modal">×</button>
+                
+                <div style="padding: 1.5rem;">
+                    <h2 style="margin-top: 0; color: var(--color-text-dark);">Complete Task</h2>
+                    <p style="color: var(--color-text-light); margin-bottom: 1.5rem;">
+                        Upload before and after images to confirm task completion.
+                    </p>
+
+                    <form id="taskCompletionForm" style="display: flex; flex-direction: column; gap: 1.5rem;">
+                        <!-- Confirmation Section -->
+                        <div style="background-color: var(--color-bg-light); padding: 1.5rem; border-radius: var(--radius-lg); border: 1px solid var(--color-border);">
+                            <h3 style="margin-top: 0; font-size: 1.1rem; color: var(--color-text-dark);">
+                                ✅ Confirmations: <span id="confirmationCount">0</span> / 3 Required
+                            </h3>
+                            <p style="color: var(--color-text-light); font-size: var(--font-size-sm); margin-bottom: 1rem;">
+                                3 out of 5 randomly selected community members must approve.
+                            </p>
+                            
+                            <div id="confirmersContainer" style="display: flex; flex-direction: column; gap: 0.75rem;">
+                                <!-- Confirmation items populated by JavaScript -->
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.75rem 1rem; font-size: 1.05rem;">
+                            🚀 Submit for Review
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+         <!-- App Modal (used for claim and donate overlays) -->
+        <div id="appModal" class="modal" role="dialog" aria-label="PamojaBuild App">
+            <div class="modal-content">
+                <button class="modal-close" id="modalCloseBtn" aria-label="Close app">×</button>
+                <div class="app-wrapper" id="appWrapper">
+                    <!-- App content populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <!-- App Modal (used for claim and donate overlays) -->
+        <div id="appModal" class="modal" role="dialog" aria-label="PamojaBuild App">
+            <div class="modal-content">
+                <button class="modal-close" id="modalCloseBtn" aria-label="Close app">×</button>
+                <div class="app-wrapper" id="appWrapper">
+                    <!-- App content populated by JavaScript -->
+                </div>
+            </div>
+        </div>
     </body>
 </html>
