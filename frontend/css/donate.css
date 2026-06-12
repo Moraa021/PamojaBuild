@@ -1,0 +1,82 @@
+.donate-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 2.5rem;
+            margin-top: 2rem;
+        }
+        .donate-card {
+            background: var(--color-bg-white);
+            padding: 2.5rem;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--color-border);
+            box-shadow: var(--shadow-md);
+        }
+        .donate-card h2 {
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+            color: var(--color-text-dark);
+            border-bottom: 2px solid var(--color-primary);
+            padding-bottom: 0.5rem;
+            display: inline-block;
+        }
+        .task-detail-card {
+            background: var(--color-bg-white);
+            padding: 2.5rem;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--color-border);
+            box-shadow: var(--shadow-md);
+            margin-bottom: 2rem;
+        }
+        .task-detail-title {
+            font-size: 1.75rem;
+            font-weight: var(--font-weight-bold);
+            color: var(--color-text-dark);
+            margin-top: 0;
+            margin-bottom: 1rem;
+        }
+        .task-detail-desc {
+            color: var(--color-text-light);
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+        .funding-summary-box {
+            background-color: var(--color-bg-light);
+            padding: 1.5rem;
+            border-radius: var(--radius-lg);
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--color-border);
+        }
+        .funding-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+        .funding-stat-label {
+            font-size: var(--font-size-xs);
+            color: var(--color-text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.25rem;
+        }
+        .funding-stat-value {
+            font-size: 1.5rem;
+            font-weight: var(--font-weight-bold);
+            color: var(--color-primary);
+        }
+        .funding-stat-value.needed {
+            color: var(--color-text-dark);
+        }
+        #invoiceContainer {
+            animation: fadeIn 0.4s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @media (max-width: 900px) {
+            .donate-grid {
+                grid-template-columns: 1fr;
+            }
+        }

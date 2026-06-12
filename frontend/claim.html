@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Claim Task - PamojaBuild</title>
+    <meta name="description" content="Claim a community task and coordinate action to improve your neighborhood.">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/claim.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar" role="navigation" aria-label="Main">
+        <div class="container">
+            <div class="navbar-brand">
+                <a href="index.html#home" class="logo">
+                    <span class="logo-icon">⚡</span>
+                    <span class="logo-text">PamojaBuild</span>
+                </a>
+            </div>
+            <div class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="index.html#home" class="nav-link">Home</a></li>
+                <li><a href="index.html#problem" class="nav-link">The Problem</a></li>
+                <li><a href="index.html#solution" class="nav-link">How It Works</a></li>
+                <li><a href="tasks.html" class="nav-link">Tasks</a></li>
+                <li><a href="app.html" class="nav-link">Launch App</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Claim Page Main -->
+    <main class="section" style="padding-top: 100px; min-height: 85vh; background-color: var(--color-bg-light);">
+        <div class="container">
+            <div style="margin-bottom: 2rem;">
+                <h1 style="margin: 0; font-size: 2.25rem; color: var(--color-text-dark);">Claim Task</h1>
+                <p style="color: var(--color-text-light); margin-top: 0.5rem; font-size: var(--font-size-lg);">
+                    Commit to resolving this local challenge and coordinate with community organizers.
+                </p>
+            </div>
+
+            <div class="claim-grid">
+                <!-- Left Column: Task Details -->
+                <div>
+                    <div class="task-detail-card">
+                        <h2 id="claimTaskTitle" class="task-detail-title">Loading Task Title...</h2>
+                        <p id="claimTaskDesc" class="task-detail-desc">Loading task description...</p>
+                        
+                        <div class="task-info-grid">
+                            <div class="task-info-item">
+                                <span class="task-info-label">Location</span>
+                                <span id="claimTaskLocation" class="task-info-value">Nairobi</span>
+                            </div>
+                            <div class="task-info-item">
+                                <span class="task-info-label">Goal & Progress</span>
+                                <span id="claimTaskGoal" class="task-info-value">0 / 0 sats</span>
+                            </div>
+                            <div class="task-info-item">
+                                <span class="task-info-label">Volunteers Assigned</span>
+                                <span id="claimTaskVolunteers" class="task-info-value">0 / 0</span>
+                            </div>
+                            <div class="task-info-item">
+                                <span class="task-info-label">Deadline</span>
+                                <span id="claimTaskDeadline" class="task-info-value">Today</span>
+                            </div>
+                        </div>
+
+                        <div style="margin: 1.5rem 0 0 0; width: 100%; height: 8px; background-color: var(--color-border); border-radius: var(--radius-sm); overflow: hidden;">
+                            <div id="claimTaskProgressBar" style="width: 0%; height: 100%; background: linear-gradient(90deg, var(--color-primary), var(--color-accent)); transition: width 0.3s ease;"></div>
+                        </div>
+                    </div>
+
+                    <div class="agreement-box">
+                        <p>
+                            <strong>Volunteer Commitment Agreement:</strong> By claiming this task, you commit to completing the specified task and submitting valid proof of completion. Payment in Satoshi will be released instantly via the Lightning Network once consensus is verified by the community keyholders.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Right Column: Volunteer Form -->
+                <div class="claim-card">
+                    <h2>Volunteer Registration</h2>
+                    <form id="claimPageForm" style="display: flex; flex-direction: column; gap: 1.25rem; margin-top: 1rem;">
+                        <div class="form-group">
+                            <label for="claimName" class="form-label">Your Name *</label>
+                            <input type="text" id="claimName" name="name" class="form-input"
+                                   placeholder="Your full name" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="claimWallet" class="form-label">Wallet Address *</label>
+                            <input type="text" id="claimWallet" name="walletAddress" class="form-input"
+                                   placeholder="Lightning Address, LNURL, or BTC Address" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="claimNote" class="form-label">Additional Notes</label>
+                            <textarea id="claimNote" name="note" class="form-textarea"
+                                       placeholder="Tell us about your experience and how you plan to tackle this task"></textarea>
+                        </div>
+                        
+                        <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                            <button type="submit" class="btn btn-primary" style="flex: 1; font-size: 1.05rem; padding: 0.65rem 1rem;">
+                                Claim Task
+                            </button>
+                            <a href="tasks.html" class="btn btn-secondary" style="flex: 1; text-align: center; font-size: 1.05rem; padding: 0.65rem 1rem;">
+                                Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- App Modal (retained just in case) -->
+    <div id="appModal" class="modal" role="dialog" aria-label="PamojaBuild App">
+        <div class="modal-content">
+            <button class="modal-close" id="modalCloseBtn" aria-label="Close app">×</button>
+            <div class="app-wrapper" id="appWrapper">
+                <!-- App content populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>PamojaBuild</h4>
+                    <p>Community tasks on Bitcoin & Lightning Network. Local problems, local solutions.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Links</h4>
+                    <ul>
+                        <li><a href="index.html#home">Home</a></li>
+                        <li><a href="index.html#problem">The Problem</a></li>
+                        <li><a href="index.html#solution">How It Works</a></li>
+                        <li><a href="tasks.html">Tasks</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Community</h4>
+                    <ul>
+                        <li><a href="#" target="_blank">GitHub</a></li>
+                        <li><a href="#" target="_blank">Twitter</a></li>
+                        <li><a href="#" target="_blank">Discord</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 PamojaBuild. Built by communities, for communities.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>PamojaBuild - Community Tasks on Bitcoin & Lightning</title>
+        <meta name="description" content="Pool resources, coordinate action, pay volunteers instantly. Community-owned solutions powered by Bitcoin and Lightning Network.">
+        <link rel="stylesheet" href="css/styles.css">
+    </head>
+    <body>
+        <!-- Navigation -->
+        <nav class="navbar" role="navigation" aria-label="Main">
+            <div class="container">
+                <div class="navbar-brand">
+                    <a href="index.html#home" class="logo">
+                        <span class="logo-text">PamojaBuild</span>
+                    </a>
+                </div>
+                <div class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+                <ul class="nav-menu" id="navMenu">
+                    <li><a href="index.html#home" class="nav-link active">Home</a></li>
+                    <li><a href="index.html#problem" class="nav-link">The Problem</a></li>
+                    <li><a href="index.html#solution" class="nav-link">How It Works</a></li>
+                    <li><a href="tasks.html#tasks" class="nav-link">Tasks</a></li>
+                    <li><a href="login.html" class="nav-link">Launch App</a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Hero Section -->
+        <section id="home" class="hero">
+            <div class="container">
+                <div class="hero-content">
+                    <h1 class="hero-title">
+                        Local Problems.<br>
+                        <span class="text-accent">Local Solutions.</span>
+                    </h1>
+                    <p class="hero-subtitle">
+                        Pool community resources and pay volunteers instantly over Lightning Network. Owned by your community. Powered by Bitcoin.
+                    </p>
+                    <div class="hero-cta">
+                        <a href="tasks.html#tasks" class="btn btn-primary" id="heroCtaBtn">See Live Tasks</a>
+                        <a href="#problem" class="btn btn-secondary" id="heroLearnBtn">Learn More</a>
+                    </div>
+                    <div class="hero-stats">
+                        <div class="stat-item">
+                            <div class="stat-number">0</div>
+                            <div class="stat-label">Tasks Posted</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">0</div>
+                            <div class="stat-label">Sats Pooled</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">0</div>
+                            <div class="stat-label">Volunteers Active</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="hero-visual">
+                    <div class="visual-placeholder" id="heroVisual">
+                        <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="150" cy="150" r="140" fill="none" stroke="currentColor" stroke-width="2" opacity="0.3"/>
+                            <circle cx="150" cy="150" r="100" fill="none" stroke="currentColor" stroke-width="2" opacity="0.5"/>
+                            <circle cx="150" cy="80" r="20" fill="currentColor" opacity="0.7"/>
+                            <circle cx="220" cy="150" r="20" fill="currentColor" opacity="0.7"/>
+                            <circle cx="150" cy="220" r="20" fill="currentColor" opacity="0.7"/>
+                            <circle cx="80" cy="150" r="20" fill="currentColor" opacity="0.7"/>
+                            <path d="M 150 80 L 220 150 L 150 220 L 80 150 Z" fill="none" stroke="currentColor" stroke-width="2" opacity="0.4"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- The Problem Section -->
+        <section id="problem" class="section section-light">
+            <div class="container">
+                <h2 class="section-title">The Problem</h2>
+                <p class="section-subtitle">Every community sees it. Nobody owns it.</p>
+                
+                <div class="problems-grid">
+                    <article class="problem-card">
+                        <div class="problem-icon">🌱</div>
+                        <h3>Overgrown Spaces</h3>
+                        <p>Bushes and weeds become security risks. But who coordinates the cleanup?</p>
+                    </article>
+                    <article class="problem-card">
+                        <div class="problem-icon">🗑️</div>
+                        <h3>Uncollected Waste</h3>
+                        <p>Markets choked with trash. No clear way to hire hands fast.</p>
+                    </article>
+                    <article class="problem-card">
+                        <div class="problem-icon">🚨</div>
+                        <h3>Safety Gaps</h3>
+                        <p>A handful of troublemakers make streets unsafe for months. Organising a response is hard.</p>
+                    </article>
+                    <article class="problem-card">
+                        <div class="problem-icon">💰</div>
+                        <h3>Coordination Friction</h3>
+                        <p>No easy way to pool resources or fairly compensate people willing to work.</p>
+                    </article>
+                </div>
+
+                <div class="problem-highlight">
+                    <p>These aren't invisible problems—people see them every day. <strong>The gap is that there's no easy way to pool resources, coordinate action, or fairly compensate the people willing to actually do the work.</strong></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- How It Works Section -->
+        <section id="solution" class="section">
+            <div class="container">
+                <h2 class="section-title">How It Works</h2>
+                <p class="section-subtitle">Four simple steps to get things done</p>
+
+                <div class="flow-timeline">
+                    <div class="flow-step">
+                        <div class="flow-number">1</div>
+                        <div class="flow-content">
+                            <h3>Post a Task</h3>
+                            <p>Spot a problem? Post it. Clear overgrown bushes. Clean the market. Organise a neighbourhood watch.</p>
+                        </div>
+                    </div>
+
+                    <div class="flow-connector">
+                        <svg viewBox="0 0 2 60" xmlns="http://www.w3.org/2000/svg">
+                            <line x1="1" y1="0" x2="1" y2="60" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                    </div>
+
+                    <div class="flow-step">
+                        <div class="flow-number">2</div>
+                        <div class="flow-content">
+                            <h3>Pool Donations</h3>
+                            <p>Community members who care donate sats. Money sits safe in a multisig wallet—no single person controls it.</p>
+                        </div>
+                    </div>
+
+                    <div class="flow-connector">
+                        <svg viewBox="0 0 2 60" xmlns="http://www.w3.org/2000/svg">
+                            <line x1="1" y1="0" x2="1" y2="60" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                    </div>
+
+                    <div class="flow-step">
+                        <div class="flow-number">3</div>
+                        <div class="flow-content">
+                            <h3>Volunteers Claim Work</h3>
+                            <p>Residents show up, do the work. Proof of completion is documented.</p>
+                        </div>
+                    </div>
+
+                    <div class="flow-connector">
+                        <svg viewBox="0 0 2 60" xmlns="http://www.w3.org/2000/svg">
+                            <line x1="1" y1="0" x2="1" y2="60" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                    </div>
+
+                    <div class="flow-step">
+                        <div class="flow-number">4</div>
+                        <div class="flow-content">
+                            <h3>Instant Payment</h3>
+                            <p>After verification from multisig keyholder consensus, volunteers get paid instantly via Lightning. No waiting.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Why Bitcoin & Lightning -->
+        <section class="section section-light why-section">
+            <div class="container">
+                <h2 class="section-title">Why Bitcoin & Lightning?</h2>
+                
+                <div class="why-grid">
+                    <div class="why-card">
+                        <h3>Instant Payments</h3>
+                        <p>Lightning means volunteers don't wait days for payment. Finish work, get paid in seconds. No intermediary takes a cut.</p>
+                    </div>
+                    <div class="why-card">
+                        <h3>Mobile-First</h3>
+                        <p>Kenya already trusts digital money. Lightning works on any phone, no bank account needed.</p>
+                    </div>
+                    <div class="why-card">
+                        <h3>Safe Funds</h3>
+                        <p>Multisig wallets mean 3-of-5 trusted keyholder consensus before any payout. No single person can run with donations.</p>
+                    </div>
+                    <div class="why-card">
+                        <h3>Community Owned</h3>
+                        <p>Bitcoin is trustless. No corporation, no government, no permission needed. Just community members coordinating.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- App Launch Section -->
+        <section id="app" class="section section-dark app-section">
+            <div class="container">
+                <div class="app-content">
+                    <h2>Ready to Build?</h2>
+                    <p>Launch the full app to post tasks, donate sats, or claim work in your community.</p>
+                    <a href="login.html" class="btn btn-primary" id="appLaunchBtn">Launch PamojaBuild App</a>
+                </div>
+            </div>
+        </section>
+
+         <!-- Footer -->
+        <footer class="footer">
+            <div class="container">
+                <div class="footer-content">
+                    <div class="footer-section">
+                        <h4>PamojaBuild</h4>
+                        <p>Community tasks on Bitcoin & Lightning Network. Local problems, local solutions.</p>
+                    </div>
+                    <div class="footer-section">
+                        <h4>Links</h4>
+                        <ul>
+                            <li><a href="#home">Home</a></li>
+                            <li><a href="#problem">The Problem</a></li>
+                            <li><a href="#solution">How It Works</a></li>
+                            <li><a href="tasks.html#tasks">Tasks</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>&copy; 2024 PamojaBuild. Built by communities, for communities.</p>
+                </div>
+            </div>
+        </footer>
+
+        <script src="script.js"></script>
+    </body>
+</html>

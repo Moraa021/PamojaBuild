@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Live Tasks - PamojaBuild</title>
+        <meta name="description" content="Browse community-owned tasks, pool donations, and claim work on PamojaBuild.">
+        <link rel="stylesheet" href="css/styles.css">
+    </head>
+    <body>
+         <!-- Navigation -->
+        <nav class="navbar" role="navigation" aria-label="Main">
+            <div class="container">
+                <div class="navbar-brand">
+                    <a href="index.html#home" class="logo">
+                        <span class="logo-text">PamojaBuild</span>
+                    </a>
+                </div>
+                <div class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+                <ul class="nav-menu" id="navMenu">
+                    <li><a href="index.html#home" class="nav-link active">Home</a></li>
+                    <li><a href="index.html#problem" class="nav-link">The Problem</a></li>
+                    <li><a href="index.html#solution" class="nav-link">How It Works</a></li>
+                    <li><a href="tasks.html#tasks" class="nav-link">Tasks</a></li>
+                    <li><a href="app.html#app" class="nav-link">Launch App</a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Live Tasks Section -->
+        <section id="tasks" class="section" style="padding-top: 100px; min-height: 80vh;">
+            <div class="container">
+                <h2 class="section-title">Live Tasks</h2>
+                <p class="section-subtitle">Join your community in action</p>
+
+                <div class="tasks-filter">
+                    <button class="filter-btn active" data-filter="all">All Tasks</button>
+                    <button class="filter-btn" data-filter="active">Active</button>
+                    <button class="filter-btn" data-filter="completed">Completed</button>
+                </div>
+
+                <div class="tasks-grid" id="tasksContainer">
+                    <!-- Tasks populated by JavaScript -->
+                    <div class="task-empty">
+                        <p>Loading tasks...</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Task Completion Modal (Before/After Images + Confirmations) -->
+        <div id="taskCompletionModal" class="modal" role="dialog" aria-label="Task Completion">
+            <div class="modal-content" style="max-width: 600px;">
+                <button class="modal-close" id="completionModalCloseBtn" aria-label="Close modal">×</button>
+                
+                <div style="padding: 1.5rem;">
+                    <h2 style="margin-top: 0; color: var(--color-text-dark);">Complete Task</h2>
+                    <p style="color: var(--color-text-light); margin-bottom: 1.5rem;">
+                        Upload before and after images to confirm task completion.
+                    </p>
+
+                    <form id="taskCompletionForm" style="display: flex; flex-direction: column; gap: 1.5rem;">
+                        <!-- Confirmation Section -->
+                        <div style="background-color: var(--color-bg-light); padding: 1.5rem; border-radius: var(--radius-lg); border: 1px solid var(--color-border);">
+                            <h3 style="margin-top: 0; font-size: 1.1rem; color: var(--color-text-dark);">
+                                ✅ Confirmations: <span id="confirmationCount">0</span> / 3 Required
+                            </h3>
+                            <p style="color: var(--color-text-light); font-size: var(--font-size-sm); margin-bottom: 1rem;">
+                                3 out of 5 randomly selected community members must approve.
+                            </p>
+                            
+                            <div id="confirmersContainer" style="display: flex; flex-direction: column; gap: 0.75rem;">
+                                <!-- Confirmation items populated by JavaScript -->
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.75rem 1rem; font-size: 1.05rem;">
+                            🚀 Submit for Review
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+         <!-- App Modal (used for claim and donate overlays) -->
+        <div id="appModal" class="modal" role="dialog" aria-label="PamojaBuild App">
+            <div class="modal-content">
+                <button class="modal-close" id="modalCloseBtn" aria-label="Close app">×</button>
+                <div class="app-wrapper" id="appWrapper">
+                    <!-- App content populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <!-- App Modal (used for claim and donate overlays) -->
+        <div id="appModal" class="modal" role="dialog" aria-label="PamojaBuild App">
+            <div class="modal-content">
+                <button class="modal-close" id="modalCloseBtn" aria-label="Close app">×</button>
+                <div class="app-wrapper" id="appWrapper">
+                    <!-- App content populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="container">
+                <div class="footer-content">
+                    <div class="footer-section">
+                        <h4>PamojaBuild</h4>
+                        <p>Community tasks on Bitcoin & Lightning Network. Local problems, local solutions.</p>
+                    </div>
+                    <div class="footer-section">
+                        <h4>Links</h4>
+                        <ul>
+                            <li><a href="#home">Home</a></li>
+                            <li><a href="#problem">The Problem</a></li>
+                            <li><a href="#solution">How It Works</a></li>
+                            <li><a href="tasks.html#tasks">Tasks</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>&copy; 2024 PamojaBuild. Built by communities, for communities.</p>
+                </div>
+            </div>
+        </footer>
+
+        <script src="script.js"></script>
+    </body>
+</html>
