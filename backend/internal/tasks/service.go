@@ -1,6 +1,7 @@
 package tasks
 
 import (
+	"database/sql"
 	"errors"
 	"fmt"
 	"io"
@@ -8,7 +9,8 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"pamojabuild/internal/models"
+
+	"PamojaBuild/internal/models"
 )
 
 type Service struct {
@@ -63,7 +65,7 @@ func (s *Service) CreateTask(t *models.Task, file multipart.File, header *multip
 			return err
 		}
 		relPath := "static/uploads/tasks/" + filename
-		t.ImagePath = &relPath
+		t.ImagePath = sql.NullString{String: relPath, Valid: true}
 	}
 	return s.Repo.Create(t)
 }
@@ -72,11 +74,11 @@ func (s *Service) ListTasks(region, status, category string) ([]models.Task, err
 	return s.Repo.List(region, status, category)
 }
 
-func (s *Service) GetTask(id int) (*models.Task, error) {
+func (s *Service) GetTask(id int64) (*models.Task, error) {
 	return s.Repo.GetByID(id)
 }
 
-func (s *Service) RaiseCap(taskID, newCap, requesterID int) error {
+func (s *Service) RaiseCap(taskID, newCap, requesterID int64) error {
 	task, err := s.Repo.GetByID(taskID)
 	if err != nil {
 		return err
@@ -87,5 +89,11 @@ func (s *Service) RaiseCap(taskID, newCap, requesterID int) error {
 	if newCap < task.MaxVolunteers {
 		return errors.New("cannot lower the volunteer cap")
 	}
-	return s.Repo.RaiseCap(taskID, newCap)
+	if err := s.Repo.RaiseCap(taskID, newCap); err != nil {
+		return err
+	}
+	if task.Status == "in_progress" && newCap > task.MaxVolunteers {
+		_ = s.Repo.UpdateStatus(taskID, "open")
+	}
+	return nil
 }

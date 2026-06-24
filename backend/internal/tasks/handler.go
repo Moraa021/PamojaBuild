@@ -1,12 +1,13 @@
 package tasks
 
 import (
+	"database/sql"
 	"encoding/json"
 	"mime/multipart"
 	"net/http"
 	"strconv"
 
-	"pamojabuild/internal/models"
+	"PamojaBuild/internal/models"
 
 	"github.com/gorilla/mux"
 )
@@ -20,23 +21,37 @@ func NewHandler(service *Service) *Handler {
 }
 
 func (h *Handler) CreateTask(w http.ResponseWriter, r *http.Request) {
-	r.ParseMultipartForm(5 << 20)
-	userID := r.Context().Value("user_id").(int)
-
-	maxVol, err := strconv.Atoi(r.FormValue("max_volunteers"))
-	if err != nil || maxVol <= 0 {
-		http.Error(w, "max_volunteers is required", http.StatusBadRequest)
+	_ = r.ParseMultipartForm(5 << 20)
+	userIDVal := r.Context().Value("user_id")
+	if userIDVal == nil {
+		writeError(w, http.StatusUnauthorized, "unauthenticated")
+		return
+	}
+	userID, ok := userIDVal.(int64)
+	if !ok {
+		writeError(w, http.StatusUnauthorized, "unauthenticated")
 		return
 	}
 
-	var goalSats *int64
+	maxVol, err := strconv.ParseInt(r.FormValue("max_volunteers"), 10, 64)
+	if err != nil || maxVol <= 0 {
+		writeError(w, http.StatusBadRequest, "max_volunteers is required and must be positive")
+		return
+	}
+
+	var goalSats sql.NullInt64
 	if gs := r.FormValue("goal_sats"); gs != "" {
 		v, err := strconv.ParseInt(gs, 10, 64)
 		if err != nil {
-			http.Error(w, "invalid goal_sats", http.StatusBadRequest)
+			writeError(w, http.StatusBadRequest, "invalid goal_sats")
 			return
 		}
-		goalSats = &v
+		goalSats = sql.NullInt64{Int64: v, Valid: true}
+	}
+
+	var locDetail sql.NullString
+	if ld := r.FormValue("location_detail"); ld != "" {
+		locDetail = sql.NullString{String: ld, Valid: true}
 	}
 
 	task := &models.Task{
@@ -45,7 +60,7 @@ func (h *Handler) CreateTask(w http.ResponseWriter, r *http.Request) {
 		Description:    r.FormValue("description"),
 		Category:       r.FormValue("category"),
 		Region:         r.FormValue("region"),
-		LocationDetail: r.FormValue("location_detail"),
+		LocationDetail: locDetail,
 		GoalSats:       goalSats,
 		MaxVolunteers:  maxVol,
 		VolunteerMode:  r.FormValue("volunteer_mode"),
@@ -55,7 +70,7 @@ func (h *Handler) CreateTask(w http.ResponseWriter, r *http.Request) {
 	var header *multipart.FileHeader
 	file, header, err = r.FormFile("image")
 	if err != nil && err != http.ErrMissingFile {
-		http.Error(w, "error reading image", http.StatusBadRequest)
+		writeError(w, http.StatusBadRequest, "error reading image")
 		return
 	}
 	if file != nil {
@@ -63,12 +78,11 @@ func (h *Handler) CreateTask(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := h.Service.CreateTask(task, file, header); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		writeError(w, http.StatusBadRequest, err.Error())
 		return
 	}
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(task)
+
+	writeSuccess(w, http.StatusCreated, task)
 }
 
 func (h *Handler) ListTasks(w http.ResponseWriter, r *http.Request) {
@@ -78,41 +92,67 @@ func (h *Handler) ListTasks(w http.ResponseWriter, r *http.Request) {
 		r.URL.Query().Get("category"),
 	)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		writeError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(tasks)
+	writeSuccess(w, http.StatusOK, tasks)
 }
 
 func (h *Handler) GetTask(w http.ResponseWriter, r *http.Request) {
-	id, err := strconv.Atoi(mux.Vars(r)["id"])
+	id, err := strconv.ParseInt(mux.Vars(r)["id"], 10, 64)
 	if err != nil {
-		http.Error(w, "invalid task id", http.StatusBadRequest)
+		writeError(w, http.StatusBadRequest, "invalid task id")
 		return
 	}
 	task, err := h.Service.GetTask(id)
 	if err != nil {
-		http.Error(w, "task not found", http.StatusNotFound)
+		writeError(w, http.StatusNotFound, "task not found")
 		return
 	}
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(task)
+	writeSuccess(w, http.StatusOK, task)
 }
 
 func (h *Handler) RaiseCap(w http.ResponseWriter, r *http.Request) {
-	id, _ := strconv.Atoi(mux.Vars(r)["id"])
-	userID := r.Context().Value("user_id").(int)
+	id, _ := strconv.ParseInt(mux.Vars(r)["id"], 10, 64)
+	userIDVal := r.Context().Value("user_id")
+	if userIDVal == nil {
+		writeError(w, http.StatusUnauthorized, "unauthenticated")
+		return
+	}
+	userID, ok := userIDVal.(int64)
+	if !ok {
+		writeError(w, http.StatusUnauthorized, "unauthenticated")
+		return
+	}
+
 	var body struct {
-		MaxVolunteers int `json:"max_volunteers"`
+		MaxVolunteers int64 `json:"max_volunteers"`
 	}
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
-		http.Error(w, "invalid body", http.StatusBadRequest)
+		writeError(w, http.StatusBadRequest, "invalid body")
 		return
 	}
 	if err := h.Service.RaiseCap(id, body.MaxVolunteers, userID); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		writeError(w, http.StatusBadRequest, err.Error())
 		return
 	}
-	w.Write([]byte(`{"message":"cap updated"}`))
+	writeSuccess(w, http.StatusOK, map[string]string{"message": "cap updated"})
+}
+
+func writeJSON(w http.ResponseWriter, status int, data interface{}) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(status)
+	json.NewEncoder(w).Encode(data)
+}
+
+func writeError(w http.ResponseWriter, status int, message string) {
+	writeJSON(w, status, map[string]interface{}{
+		"error": message,
+	})
+}
+
+func writeSuccess(w http.ResponseWriter, status int, data interface{}) {
+	writeJSON(w, status, map[string]interface{}{
+		"data": data,
+	})
 }

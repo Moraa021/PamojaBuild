@@ -3,7 +3,8 @@ package tasks
 import (
 	"database/sql"
 	"fmt"
-	"pamojabuild/internal/models"
+
+	"PamojaBuild/internal/models"
 )
 
 type Repository struct {
@@ -16,7 +17,11 @@ func NewRepository(db *sql.DB) *Repository {
 
 func (r *Repository) Create(t *models.Task) error {
 	query := `INSERT INTO tasks (creator_id, title, description, category, region, location_detail, status, goal_sats, max_volunteers, volunteer_mode, image_path) VALUES ($1,$2,$3,$4,$5,$6,'open',$7,$8,$9,$10) RETURNING id, created_at`
-	return r.DB.QueryRow(query, t.CreatorID, t.Title, t.Description, t.Category, t.Region, t.LocationDetail, t.GoalSats, t.MaxVolunteers, t.VolunteerMode, t.ImagePath).Scan(&t.ID, &t.CreatedAt)
+	err := r.DB.QueryRow(query, t.CreatorID, t.Title, t.Description, t.Category, t.Region, t.LocationDetail, t.GoalSats, t.MaxVolunteers, t.VolunteerMode, t.ImagePath).Scan(&t.ID, &t.CreatedAt)
+	if err == nil {
+		t.Status = "open"
+	}
+	return err
 }
 
 func (r *Repository) List(region, status, category string) ([]models.Task, error) {
@@ -54,24 +59,24 @@ func (r *Repository) List(region, status, category string) ([]models.Task, error
 	return tasks, nil
 }
 
-func (r *Repository) GetByID(id int) (*models.Task, error) {
+func (r *Repository) GetByID(id int64) (*models.Task, error) {
 	t := &models.Task{}
 	err := r.DB.QueryRow(`SELECT id, creator_id, title, description, category, region, location_detail, status, goal_sats, max_volunteers, volunteer_mode, image_path, created_at FROM tasks WHERE id=$1`, id).Scan(&t.ID, &t.CreatorID, &t.Title, &t.Description, &t.Category, &t.Region, &t.LocationDetail, &t.Status, &t.GoalSats, &t.MaxVolunteers, &t.VolunteerMode, &t.ImagePath, &t.CreatedAt)
 	return t, err
 }
 
-func (r *Repository) UpdateStatus(taskID int, status string) error {
+func (r *Repository) UpdateStatus(taskID int64, status string) error {
 	_, err := r.DB.Exec(`UPDATE tasks SET status=$1 WHERE id=$2`, status, taskID)
 	return err
 }
 
-func (r *Repository) RaiseCap(taskID, newCap int) error {
+func (r *Repository) RaiseCap(taskID int64, newCap int64) error {
 	_, err := r.DB.Exec(`UPDATE tasks SET max_volunteers=$1 WHERE id=$2`, newCap, taskID)
 	return err
 }
 
-func (r *Repository) CountApprovedVolunteers(taskID int) (int, error) {
-	var count int
+func (r *Repository) CountApprovedVolunteers(taskID int64) (int64, error) {
+	var count int64
 	err := r.DB.QueryRow(`SELECT COUNT(*) FROM volunteers WHERE task_id=$1 AND status='approved'`, taskID).Scan(&count)
 	return count, err
 }

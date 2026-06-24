@@ -2,8 +2,9 @@ package volunteers
 
 import (
 	"errors"
-	"pamojabuild/internal/models"
-	tasksRepo "pamojabuild/internal/tasks"
+
+	"PamojaBuild/internal/models"
+	tasksRepo "PamojaBuild/internal/tasks"
 )
 
 type Service struct {
@@ -15,7 +16,7 @@ func NewService(repo *Repository, tasksRepo *tasksRepo.Repository) *Service {
 	return &Service{Repo: repo, TasksRepo: tasksRepo}
 }
 
-func (s *Service) Apply(taskID, userID int) (*models.Volunteer, error) {
+func (s *Service) Apply(taskID, userID int64) (*models.Volunteer, error) {
 	task, err := s.TasksRepo.GetByID(taskID)
 	if err != nil {
 		return nil, errors.New("task not found")
@@ -48,10 +49,16 @@ func (s *Service) Apply(taskID, userID int) (*models.Volunteer, error) {
 	if err := s.Repo.Create(v); err != nil {
 		return nil, err
 	}
+	if status == "approved" {
+		approvedCount, err := s.TasksRepo.CountApprovedVolunteers(taskID)
+		if err == nil && approvedCount >= task.MaxVolunteers {
+			_ = s.TasksRepo.UpdateStatus(taskID, "in_progress")
+		}
+	}
 	return v, nil
 }
 
-func (s *Service) Approve(volunteerID, requesterID int) error {
+func (s *Service) Approve(volunteerID, requesterID int64) error {
 	v, err := s.Repo.GetByID(volunteerID)
 	if err != nil {
 		return errors.New("volunteer not found")
@@ -73,10 +80,17 @@ func (s *Service) Approve(volunteerID, requesterID int) error {
 	if count >= task.MaxVolunteers {
 		return errors.New("volunteer cap reached")
 	}
-	return s.Repo.UpdateStatus(volunteerID, "approved")
+	if err := s.Repo.UpdateStatus(volunteerID, "approved"); err != nil {
+		return err
+	}
+	approvedCount, err := s.TasksRepo.CountApprovedVolunteers(v.TaskID)
+	if err == nil && approvedCount >= task.MaxVolunteers {
+		_ = s.TasksRepo.UpdateStatus(v.TaskID, "in_progress")
+	}
+	return nil
 }
 
-func (s *Service) Reject(volunteerID, requesterID int) error {
+func (s *Service) Reject(volunteerID, requesterID int64) error {
 	v, err := s.Repo.GetByID(volunteerID)
 	if err != nil {
 		return errors.New("volunteer not found")
@@ -91,6 +105,6 @@ func (s *Service) Reject(volunteerID, requesterID int) error {
 	return s.Repo.UpdateStatus(volunteerID, "rejected")
 }
 
-func (s *Service) ListForTask(taskID int) ([]models.Volunteer, error) {
+func (s *Service) ListForTask(taskID int64) ([]models.Volunteer, error) {
 	return s.Repo.ListForTask(taskID)
 }

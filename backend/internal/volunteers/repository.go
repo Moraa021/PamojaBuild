@@ -2,7 +2,8 @@ package volunteers
 
 import (
 	"database/sql"
-	"pamojabuild/internal/models"
+
+	"PamojaBuild/internal/models"
 )
 
 type Repository struct {
@@ -20,7 +21,7 @@ func (r *Repository) Create(v *models.Volunteer) error {
 	).Scan(&v.ID, &v.CreatedAt)
 }
 
-func (r *Repository) GetByID(id int) (*models.Volunteer, error) {
+func (r *Repository) GetByID(id int64) (*models.Volunteer, error) {
 	v := &models.Volunteer{}
 	err := r.DB.QueryRow(
 		`SELECT id, task_id, user_id, status, created_at FROM volunteers WHERE id=$1`, id,
@@ -28,24 +29,24 @@ func (r *Repository) GetByID(id int) (*models.Volunteer, error) {
 	return v, err
 }
 
-func (r *Repository) CountForTask(taskID int) (int, error) {
-	var count int
+func (r *Repository) CountForTask(taskID int64) (int64, error) {
+	var count int64
 	err := r.DB.QueryRow(`SELECT COUNT(*) FROM volunteers WHERE task_id=$1 AND status IN ('pending','approved')`, taskID).Scan(&count)
 	return count, err
 }
 
-func (r *Repository) AlreadyApplied(taskID, userID int) (bool, error) {
-	var count int
+func (r *Repository) AlreadyApplied(taskID, userID int64) (bool, error) {
+	var count int64
 	err := r.DB.QueryRow(`SELECT COUNT(*) FROM volunteers WHERE task_id=$1 AND user_id=$2`, taskID, userID).Scan(&count)
 	return count > 0, err
 }
 
-func (r *Repository) UpdateStatus(id int, status string) error {
+func (r *Repository) UpdateStatus(id int64, status string) error {
 	_, err := r.DB.Exec(`UPDATE volunteers SET status=$1 WHERE id=$2`, status, id)
 	return err
 }
 
-func (r *Repository) GetApprovedForTask(taskID int) ([]models.Volunteer, error) {
+func (r *Repository) GetApprovedForTask(taskID int64) ([]models.Volunteer, error) {
 	rows, err := r.DB.Query(`SELECT id, task_id, user_id, status, created_at FROM volunteers WHERE task_id=$1 AND status='approved'`, taskID)
 	if err != nil {
 		return nil, err
@@ -60,7 +61,7 @@ func (r *Repository) GetApprovedForTask(taskID int) ([]models.Volunteer, error) 
 	return vs, nil
 }
 
-func (r *Repository) ListForTask(taskID int) ([]models.Volunteer, error) {
+func (r *Repository) ListForTask(taskID int64) ([]models.Volunteer, error) {
 	rows, err := r.DB.Query(`SELECT id, task_id, user_id, status, created_at FROM volunteers WHERE task_id=$1`, taskID)
 	if err != nil {
 		return nil, err
